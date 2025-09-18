@@ -1,0 +1,9 @@
+env/
+__pycache__/
+.ipynb_checkpoints/
+.env
+*.sqlite3
+media/
+static/
+*.sh
+.prod/
