@@ -37,7 +37,7 @@ python manage.py runserver
 ```
 
 ###### Dev URL's
-[backend](http://localhost:8000)
-[frontend](http://localhost:5173)
+- [backend](http://localhost:8000)
+- [frontend](http://localhost:5173)
 
 - Frontend Repo [URL](https://github.com/preeti-khachne/Alumni-Connect)
