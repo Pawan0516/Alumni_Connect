@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Invitation to Join Alumni Connect</title>
+    <style>
+      body { font-family: Arial, sans-serif; background-color: #f7f9fc; margin: 0; padding: 0; }
+      .container { max-width: 600px; margin: 30px auto; background: #ffffff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 30px; }
+      .header { text-align: center; padding-bottom: 15px; border-bottom: 1px solid #eaeaea; }
+      .header h2 { margin: 0; color: #2d6cdf; }
+      .content { font-size: 15px; color: #333; line-height: 1.6; }
+      .highlight { font-weight: bold; color: #2d6cdf; }
+      .button { display: inline-block; background-color: #2d6cdf; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; margin-top: 20px; }
+      .footer { text-align: center; font-size: 13px; color: #888; margin-top: 30px; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>You're Invited!</h2>
+      </div>
+      <div class="content">
+        <p>Dear <span class="highlight">{{ member_name }}</span>,</p>
+
+        <p>
+          You have been invited to join <strong>{{ college_name }}</strong> on the 
+          <strong>Alumni Connect Platform</strong>. Connect with fellow students, alumni, and faculty, and stay updated with college events and initiatives.
+        </p>
+
+        <p>
+          Click the button below to accept the invitation and create your account:
+        </p>
+
+        <a href="{{ invitation_link }}" class="button">Join Now</a>
+
+        <p>
+          We look forward to welcoming you to the community!
+        </p>
+
+        <p>
+          Regards,<br>
+          <strong>The Alumni Engagement Platform Team</strong>
+        </p>
+      </div>
+      <div class="footer">
+        &copy; {{ current_year }} Alumni Engagement Platform. All rights reserved.
+      </div>
+    </div>
+  </body>
+</html>
