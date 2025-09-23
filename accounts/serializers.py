@@ -1,83 +1,40 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from accounts import validators as v
-from accounts.models import User
+from accounts.models import User, UserDetail
+
 
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = (
-            'id', 'first_name', 'last_name','gender', 'college', 'phone', 'email', 'date_joined'
-        )
+        fields = ("id", "email", 'org_admin', "date_joined")
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserDetail
+        fields = ["phone", "first_name", "last_name", "gender", "dob", "bio", "profile_pic"]
+
 
 class ProfileSerializer(serializers.ModelSerializer):
+    user_detail = UserDetailSerializer(allow_null=True, read_only=True)
+
     class Meta:
         model = User
-        fields = (
-            'id', 'first_name', 'last_name', 'gender', 'college', 'phone', 'email','suspended','verified', 'date_joined'
-        )
+        fields = ("id", "email", "org_admin", "is_suspended", "is_verified", "date_joined", "user_detail")
+
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = (
-            'first_name', 'last_name', 'gender', 'college', 'phone'
-        )
+        model = UserDetail
+        fields = ["phone", "first_name", "last_name", "gender", "dob", "bio", "profile_pic"]
         extra_kwargs = {
-            'phone': {
-                'validators': [v.validate_phone],
-                'required': True
-            },
-            'first_name': {'required': True, 'validators': [v.validate_first_name]},
-            'last_name': {'default':'', 'validators': [v.validate_last_name]},
-            'gender': {'required': True, 'validators': [v.validate_gender]},
-            'college': {'required': True, 'validators': [v.validate_college]},
+            "phone": {"validators": [v.validate_phone]},
+            "first_name": {"validators": [v.validate_first_name]},
+            "last_name": {"default": "", "validators": [v.validate_last_name]},
         }
+
 
 class ChangePasswordSerializer(serializers.Serializer):
-    model = User
     old_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True)
-
-
-class RegisterSerializer(serializers.ModelSerializer):    
-    class Meta:
-        model = User
-        fields = [
-            'email', 'phone', 'first_name', 'last_name',
-            'gender', 'college', 'password'
-        ]
-        extra_kwargs = {
-            'email': {
-                'validators': [v.validate_email],
-                'required': True
-            },
-            'phone': {
-                'validators': [v.validate_phone],
-                'required': True
-            },
-            'first_name': {'required': True, 'validators': [v.validate_first_name]},
-            'last_name': {'default':'', 'validators': [v.validate_last_name]},
-            'gender': {'required': True, 'validators': [v.validate_gender]},
-            'college': {'required': True, 'validators': [v.validate_college]},
-            'password': {
-                'write_only': True,
-                'required': True,
-                'validators': [v.validate_password, validate_password]
-            },
-        }
-
-    def create(self, validated_data):
-        user = User.objects.create(
-            email=validated_data['email'],
-            phone=validated_data['phone'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name'],
-            gender=validated_data['gender'],
-            college=validated_data['college'],
-        )
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
+    new_password = serializers.CharField(required=True, validators=[v.validate_password, validate_password])

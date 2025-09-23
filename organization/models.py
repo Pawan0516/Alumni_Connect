@@ -20,6 +20,11 @@ class Address(models.Model):
     
 
 class College(models.Model):
+    STATUS_CHOICES = [
+        ("pending", "Pending Approval"),
+        ("approved", "Approved"),
+        ("rejected", "Rejected"),
+    ]
     name = models.CharField(max_length=255, db_index=True, null=False, blank=False)
     handle = models.CharField(max_length=255, db_index=True, unique=True, null=False, blank=False)
     website = models.URLField(blank=True, null=True)
@@ -28,6 +33,7 @@ class College(models.Model):
     line1 = models.CharField(max_length=255)
     line2 = models.CharField(max_length=255, blank=True, null=True)
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True, related_name="colleges")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     is_deleted = models.BooleanField(default=False, null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

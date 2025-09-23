@@ -1,7 +1,9 @@
-from .views import CollegeViewSet
-from django.urls import path, include
+from django.urls import path
 from organization import views
 
 urlpatterns = [
-    path('colleges/', views.CollegeViewSet.as_view(), name='colleges'),
+    path("onboard/colleges/", views.OnboardCollegeAPIView.as_view(), name="college-onboard"),
+    path("onboard/colleges/verify/", views.EmailVerifyViewSet.as_view(), name="college-verify"),
+    path("colleges/<str:handle>/", views.CollegeDetailAPIView.as_view(), name="college-detail"),
+    path("colleges/", views.CollegeAPIView.as_view(), name="add-college"),
 ]
