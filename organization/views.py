@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
 from organization.models import College, User
-from organization.serializers import CollegeSerializer, OnboardSerializer
+from organization.serializers import CollegeSerializer, OnboardSerializer, CollegeCreateSerializer
 import datetime as dt
 import random as rd
 from emails.utils import send_admin_onboarding_otp
@@ -99,6 +99,51 @@ class EmailVerifyViewSet(APIView):
                }
         return Response(res, status=status.HTTP_200_OK)
 
+
+class CollegeAPIView(APIView):
+    authentication_classes = []  # No authentication
+    permission_classes = []      # Open to all
+
+    def post(self, request):
+        serializer = CollegeCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data.pop("email")
+
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                return Response(
+                    {"status": "failed", "message": "User with this email does not exist."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Check if user is org_admin and verified
+            if not (user.org_admin and getattr(user, "is_verified", False)):
+                return Response(
+                    {"status": "failed", "message": "You are not allowed to add a college."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            # Check if this user already linked to a college
+            if College.objects.filter(admin=user, is_deleted=False).exists():
+                return Response(
+                    {"status": "failed", "message": "This email is already linked to a college."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Create the college
+            college = College.objects.create(admin=user, **serializer.validated_data)
+
+            return Response(
+                {
+                    "status": "success",
+                    "message": "College created successfully and is pending approval.",
+                    "college": CollegeSerializer(college).data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CollegeDetailAPIView(APIView):
     """

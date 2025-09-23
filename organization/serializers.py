@@ -38,6 +38,21 @@ class CollegeSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created_at", "updated_at")
 
 
+class CollegeCreateSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(write_only=True)
+
+    class Meta:
+        model = College
+        fields = [
+            "name",
+            "handle",
+            "website",
+            "established_date",
+            "line1",
+            "line2",
+            "email",
+        ]
+
 
 class OnboardSerializer(serializers.ModelSerializer):    
     class Meta:
